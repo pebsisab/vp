@@ -1,6 +1,6 @@
 <?php
 	//loen sisse konfiguratsioonifaili
-	require_once "../config.php";
+	require_once "../../config.php";
 	//echo $server_host; - kontrollimiseks
 	
 	$author_name = "Isabella Pebsen";
