@@ -1,6 +1,8 @@
 <?php
+	//algatan sessiooni
+	session_start();
 	//loen sisse konfiguratsioonifaili
-	require_once "../../config.php";
+	require_once "fnc_user.php";
 	//echo $server_host; - kontrollimiseks
 	
 	$author_name = "Isabella Pebsen";
@@ -154,6 +156,11 @@
 		}
 	}
 	
+	//sisselogimine (funktsioon fnc_user.php)
+	$login_error = null;
+	if(isset($_POST["login_submit"])){
+        $login_error = sign_in($_POST["email_input"], $_POST["password_input"]);
+	}
 ?>
 <!DOCTYPE html>
 <html>
@@ -165,6 +172,18 @@
 	<img src="pics/vp_banner_gs.png" alt="banner">
 	<h1><?php echo $author_name; ?>, veebiprogrammeerimine</h1>
 	<p>See leht on loodud õppetöö raames ja ei sisalda tõsist infot</p>
+	
+	<!--sisselogmise vorm-->
+	<hr>
+	<h2>Logi sisse</h2>
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+		<input type="email" name="email_input" placeholder="Kasutajatunnus ehk e-post">
+		<input type="password" name="password_input" placeholder="salasõna">
+		<input type="submit" name="login_submit" value="Logi sisse"><span><strong><?php echo $login_error; ?></strong></span>
+	</form>
+	<p><a href="add_user.php">Loo omale kasutaja</a></p>
+	<hr>
+	
 	<p>õppetöö toimus <a href="https://www.tlu.ee">Tallinna Ülikoolis</a>, Digitehnoloogiate instituudis.</p>
 	
 	<p> Lehe avamise hetk: <?php echo $weekday_names_et[$weekday_now -1].", " .$full_time_now; ?></p>
@@ -203,8 +222,6 @@
 		</select>
 		<input type="submit" id="photo_submit" name="photo_submit" value="OK">
 	</form>
-	<?php echo $photo_html; ?>
-	<hr>
-
-</body>
-</html>
+	<?php echo $photo_html; 
+	require_once "footer.php";?>	
+	
