@@ -1,5 +1,22 @@
 <?php
-	require_once "../../config.php";
+	//algatan sessiooni
+	session_start();
+	//loen sisse konfiguratsioonifaili
+	require_once "fnc_user.php";
+	
+	require_once "fnc_user.php";
+	if(!isset($_SESSION["user_id"])){
+		//jõuga viiakse page.php
+		header("Location: page.php");
+		exit();
+	}
+	//logime välja
+	if(isset($_GET["logout"])){
+		session_destroy();
+		header("Location: page.php");
+		exit();
+	}
+	require_once "header.php";
 	
 	//loome andmebaasiühenduse
 	$conn = new mysqli($server_host, $server_user_name, $server_password, $database);

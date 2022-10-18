@@ -1,6 +1,24 @@
 <?php
-	require_once "../../config.php";
+	//algatan sessiooni
+	session_start();
+	//loen sisse konfiguratsioonifaili
+	require_once "fnc_user.php";
+	
+	require_once "fnc_user.php";
+	if(!isset($_SESSION["user_id"])){
+		//jõuga viiakse page.php
+		header("Location: page.php");
+		exit();
+	}
+	//logime välja
+	if(isset($_GET["logout"])){
+		session_destroy();
+		header("Location: page.php");
+		exit();
+	}
+	require_once "header.php";
 
+	require_once "../../config.php";
 	$title_error = null;
 	$year_error = null;
 	$duration_error = null;
@@ -71,7 +89,11 @@
 	<title>Isabella Pebsen, veebiprogrammeerimine</title>
 </head>
 <body>
-	<img src="pics/vp_banner_gs.png" alt="banner">
+
+	<ul>
+		<li>Logi <a href="?logout=1">välja</a></li>
+	</ul>
+
 	<h1>Isabella Pebsen, veebiprogrammeerimine</h1>
 	<p>See leht on loodud õppetöö raames ja ei sisalda tõsist infot</p>
 	<p>õppetöö toimus <a href="https://www.tlu.ee">Tallinna Ülikoolis</a>, Digitehnoloogiate instituudis.</p>

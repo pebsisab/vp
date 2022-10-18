@@ -96,13 +96,12 @@
 			
 			
             //kui kõik kombes, salvestame uue kasutaja
-            if(empty($firstname_error) and empty($last_name_error) and empty($birth_month_error) and empty($birth_year_error) and empty($birth_day_error) and empty($birth_date_error) and empty($gender_error) and empty($email_error) and empty($password_error) and empty($confirm_password_error)){
+             if(empty($firstname_error) and empty($last_name_error) and empty($birth_month_error) and empty($birth_year_error) and empty($birth_day_error) and empty($birth_date_error) and empty($gender_error) and empty($email_error) and empty($password_error) and empty($confirm_password_error)){
 				//salvestame andmetabelisse
 				$notice = sign_up($first_name, $last_name, $birth_date, $gender, $email, $_POST["password_input"]);
-				if($notice ==1){
-					$notice = "uus kasutaja edukalt loodud";
-				} else {
-					$notice = "uue kasutaja loomisel tekkis tõrge";
+				if($notice == 1){
+					$notice = "Uus kasutaja edukalt loodud!";
+					//$notice = null;
 					$first_name = null;
 					$last_name = null;
 					$email = null;
@@ -111,6 +110,12 @@
 					$birth_year = null;
 					$birth_day = null;
 					$birth_date = null;
+				} else {
+					if($notice == 2){
+						$notice = "Selline kasutaja on juba olemas!";
+					} else {
+						$notice = "Uue kasutaja loomisel tekkis tõrge!";
+					}
 				}
 			}
 		} //if submit lõppeb
