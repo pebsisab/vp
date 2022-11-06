@@ -23,6 +23,8 @@
 	<br>
 	<li><a href="add_new_film.php">Lisa uusi filme siit</a></li>
 	<li><a href="display_film.php">Vaata lisatuid filme</a></li>
+	<li><a href="gallery_public.php">Avalike fotode galerii</a></li>
+	<li><a href="gallery_own.php">Minu fotode galerii</a></li>
 	<li><a href="read_daycomments.php">Vaata lisatuid päevakommentaare</a></li>
 </ul>
 <?php require_once "footer.php";?>	
