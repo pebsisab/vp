@@ -112,3 +112,57 @@
 		$conn->close();
 		return $photo_data;
 	}
+	
+	function update_photo_data($alt, $privacy, $id){
+		$conn = new mysqli($GLOBALS["server_host"], $GLOBALS["server_user_name"], $GLOBALS["server_password"], $GLOBALS["database"]);
+        $conn->set_charset("utf8");
+        $stmt = $conn->prepare("SELECT userid FROM vp_photos WHERE id = ?");
+        echo $conn->error;
+        $stmt->bind_param("i", $id);
+        $stmt->bind_result($userid_from_db);
+        $stmt->execute();
+        if($stmt->fetch()){
+            if($userid_from_db == $_SESSION["user_id"]){
+                //$stmt->close();
+                $stmt->prepare("UPDATE vp_photos SET alttext = ?, privacy = ? WHERE id = ?");
+                $stmt->bind_param("sii", $alt, $privacy, $id);
+                $stmt->execute();
+                $stmt->close();
+                $conn->close();
+                header("Location: gallery_own.php");
+                exit();
+			}
+		}
+        echo $stmt->error;
+        $stmt->close();
+        $conn->close();
+        header("Location: gallery_own.php");
+        exit();
+        
+	}
+	
+	function delete_own_photo_data($id){
+        $conn = new mysqli($GLOBALS["server_host"], $GLOBALS["server_user_name"], $GLOBALS["server_password"], $GLOBALS["database"]);
+        $conn->set_charset("utf8");
+        $stmt = $conn->prepare("SELECT userid FROM vp_photos WHERE id = ?");
+        echo $conn->error;
+        $stmt->bind_param("i", $id);
+        $stmt->bind_result($userid_from_db);
+        $stmt->execute();
+        echo $stmt->error;
+        //kontrollime kas muutja user id ja sessiooni user id on sama, siis võib kustutada
+        if($stmt->fetch()){
+            if($userid_from_db == $_SESSION["user_id"]){
+                //$stmt->close();
+                $stmt->prepare("UPDATE vp_photos SET deleted = now() WHERE id = ?");
+                $stmt->bind_param("i", $id);
+                $stmt->execute();
+                $stmt->close();
+                $conn->close();
+                header("Location: gallery_own.php");
+                exit();
+            }
+        }
+        header("Location: gallery_own.php");
+        exit();
+    }

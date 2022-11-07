@@ -25,7 +25,9 @@
 		if(isset($_POST["photo_submit"])){
 			$alt = test_input($_POST["alt_input"]);
 			$privacy = filter_var($_POST["privacy_input"], FILTER_VALIDATE_INT);
-			//andmete uuendamise osa
+			$id = filter_var($_POST["photo_input"], FILTER_VALIDATE_INT);
+			//andmete uuendamise osa, funktsiooni välja kutsumine
+			$photo_update = update_photo_data($alt, $privacy, $id);
 		}
 	}
 	
@@ -35,6 +37,21 @@
 		$privacy = $photo_data["privacy"];
 		
 	}
+	
+	if(isset($_POST["photo_delete_submit"])){
+        //mida me siin kontrollime?
+        if(isset($_POST["photo_input"]) and filter_var($_POST["photo_input"], FILTER_VALIDATE_INT)){
+            $id = filter_var($_POST["photo_input"], FILTER_VALIDATE_INT);
+            $photo_error = delete_own_photo_data($id);
+            if (empty($photo_error)){
+                $photo_error = "Pilt sai kustutatud";
+            } else {
+                $photo_error = "Pole luba pilti kustutada. Saate kustutada vaid enda faile.";
+            } 
+        } else {
+        $photo_error = "Pilti ei saanud kustutada";
+        }
+    }
 	
 	require_once "header.php";
 	
@@ -70,4 +87,9 @@
 		<input type="submit" name="photo_submit" id="photo_submit" value="Muuda">
 		<span><?php echo $photo_error; ?></span>
 	</form>
+	<!-- Lisan kustutamise formi -->
+    <form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+        <input type="hidden" name="photo_input" value="<?php echo $_GET["id"]; ?>">
+        <input type="submit" name="photo_delete_submit" id="photo_delete_submit" value="Kustuta">
+    </form>
 <?php require_once "footer.php"; ?>
