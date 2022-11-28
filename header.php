@@ -3,11 +3,13 @@
 <head>
 	<meta charset="utf-8">
 	<title>veebiprogrammeerimine</title>
-	<?php
-		if(isset($style_sheets)){
-			//<link rel="stylesheet" href="styles/gallery.css">
-			echo '<link rel="stylesheet" href="' .$style_sheets .'">' ."\n";
+	<style>
+		body {
+			background-color: <?php echo $_SESSION["user_bg_color"];?>;
+			color: <?php echo $_SESSION["user_txt_color"];?>;
 		}
+	</style>
+	<?php
 		
 		$style_sheets = ["styles/gallery.css"];
         if(isset($style_sheets) and !empty($style_sheets)){

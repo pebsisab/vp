@@ -1,8 +1,11 @@
 <?php
 	//algatan sessiooni
-	session_start();
+	//session_start();
+	require_once "classes/SessionManager.class.php";
+	SessionManager::sessionStart("vp", 0, "~pebsisab/vp/", "greeny.cs.tlu.ee");
 	//loen sisse konfiguratsioonifaili
 	require_once "fnc_user.php";
+	require_once "fnc_gallery.php";
 	//echo $server_host; - kontrollimiseks
 	
 	$author_name = "Isabella Pebsen";
@@ -183,7 +186,10 @@
 	</form>
 	<p><a href="add_user.php">Loo omale kasutaja</a></p>
 	<hr>
-	
+	<!--kõige uuem photo, privacy 3-->
+	<h2>Kasutajate üleslaetud foto</h2>
+	<!--<?php // echo latest_public_photo(); ?>-->
+	<hr>
 	<p>õppetöö toimus <a href="https://www.tlu.ee">Tallinna Ülikoolis</a>, Digitehnoloogiate instituudis.</p>
 	
 	<p> Lehe avamise hetk: <?php echo $weekday_names_et[$weekday_now -1].", " .$full_time_now; ?></p>

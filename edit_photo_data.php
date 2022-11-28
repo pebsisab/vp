@@ -1,5 +1,7 @@
 <?php
-	session_start();
+	//session_start();
+	require_once "classes/SessionManager.class.php";
+	SessionManager::sessionStart("vp", 0, "~pebsisab/vp/", "greeny.cs.tlu.ee");
 	if(!isset($_SESSION["user_id"])){
 		//jõuga viiakse page.php lehele
 		header("Location: page.php");
@@ -22,36 +24,45 @@
 	$privacy = 1;
 	
 	if($_SERVER["REQUEST_METHOD"] == "POST"){
+		$id = $_POST["photo_input"];
 		if(isset($_POST["photo_submit"])){
 			$alt = test_input($_POST["alt_input"]);
 			$privacy = filter_var($_POST["privacy_input"], FILTER_VALIDATE_INT);
-			$id = filter_var($_POST["photo_input"], FILTER_VALIDATE_INT);
-			//andmete uuendamise osa, funktsiooni välja kutsumine
-			$photo_update = update_photo_data($alt, $privacy, $id);
+			//andmete uuendamise osa
+			if(isset($_POST["photo_input"]) and filter_var($_POST["photo_input"], FILTER_VALIDATE_INT)){
+				$photo_error = update_photo_data($alt, $privacy, $_POST["photo_input"]);
+				if(empty($photo_error)){
+					$photo_error = "Andmed muudetud!";
+				} else {
+					$photo_error = "Pildi andmeid ei õnnestunud muuta!";
+				}
+			} else {
+				$photo_error = "Pildi andmeid ei õnnestu muuta!";
+			}
+		}//if photo_submit
+		
+		if(isset($_POST["photo_delete_submit"])){
+			if(isset($_POST["photo_input"]) and filter_var($_POST["photo_input"], FILTER_VALIDATE_INT)){
+				$photo_error = delete_photo($id);
+				if(empty($photo_error)){
+					$photo_error = "Pilt kustutatud!";
+				} else {
+					$photo_error = "Pildi kustutamine ei õnnestunud!";
+				}
+			} else {
+				$photo_error = "Pilti ei õnnestu kustutada!";
+			}
 		}
-	}
+	}//if POST
 	
 	if(isset($_GET["id"]) and !empty($_GET["id"]) and filter_var($_GET["id"], FILTER_VALIDATE_INT)){
 		$photo_data = read_own_photo_data($_GET["id"]);
 		$alt = $photo_data["alt"];
 		$privacy = $photo_data["privacy"];
-		
+		$id = $_GET["id"];
 	}
 	
-	if(isset($_POST["photo_delete_submit"])){
-        //mida me siin kontrollime?
-        if(isset($_POST["photo_input"]) and filter_var($_POST["photo_input"], FILTER_VALIDATE_INT)){
-            $id = filter_var($_POST["photo_input"], FILTER_VALIDATE_INT);
-            $photo_error = delete_own_photo_data($id);
-            if (empty($photo_error)){
-                $photo_error = "Pilt sai kustutatud";
-            } else {
-                $photo_error = "Pole luba pilti kustutada. Saate kustutada vaid enda faile.";
-            } 
-        } else {
-        $photo_error = "Pilti ei saanud kustutada";
-        }
-    }
+	//$_SESSION["gallery_own_page"] = $page;
 	
 	require_once "header.php";
 	
@@ -60,6 +71,7 @@
 <ul>
 	<li>Logi <a href="?logout=1">välja</a></li>
 	<li>Tagasi <a href="home.php">avalehele</a></li>
+	<li>Tagasi <a href="<?php echo "gallery_own.php?page=" .$_SESSION["gallery_own_page"];?>">Tagasi oma galeriisse</a></li>
 	
 </ul>
 	<hr>
@@ -69,7 +81,7 @@
 		echo '<img src="' .$gallery_photo_normal_folder .$photo_data["filename"] .'" alt="' .$alt .'">' ."\n";
 	?>
 	
-	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]) ."?id=" .$id;?>">
 		<input type="hidden" name="photo_input" id="photo_input" value="<?php echo $_GET["id"]; ?>">
 		<br>
 		<label for="alt_input">Alternatiivtekst (alt): </label>

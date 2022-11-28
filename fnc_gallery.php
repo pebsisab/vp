@@ -31,6 +31,34 @@
 		return $photo_html;
     }
 	
+	/*function latest_public_photo(){
+		$skip = ($page - 1) * 1;
+        $photo_html = null;
+		$privacy = 3
+        $conn = new mysqli($GLOBALS["server_host"], $GLOBALS["server_user_name"], $GLOBALS["server_password"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
+		$stmt = $conn->prepare("SELECT filename, alttext, FROM vp_photos WHERE id = (SELECT MAX(id)) FROM vp_photos WHERE privacy = ? AND deleted IS NULL");
+        echo $conn->error;
+        $stmt->bind_param("i", $privacy);
+        $stmt->bind_result($filename_from_db, $alttext_from_db);
+        $stmt->execute();
+        while($stmt->fetch()){
+			$photo_html .= '<div class="thumbgallery">' ."\n";
+			$photo_html .= '<img src="' .$GLOBALS["gallery_photo_thumbnail_folder"] .$filename_from_db .'" alt="';
+            if(empty($alttext_from_db)){
+                $photo_html .= "Üleslaetud foto";
+            } else {
+                $photo_html .= $alttext_from_db;
+            }
+            $photo_html .= '" class="thumbs">' ."\n";
+            $photo_html .= "<p>" .$firstname_from_db ." " .$lastname_from_db ."</p> \n";
+			$photo_html .= "</div> \n";
+        }
+        $stmt->close();
+		$conn->close();
+		return $photo_html;
+    } */
+	
 	function read_own_photos($page, $limit){
 		$skip = ($page - 1) * $limit;
         $photo_html = null;
@@ -129,7 +157,6 @@
                 $stmt->execute();
                 $stmt->close();
                 $conn->close();
-                header("Location: gallery_own.php");
                 exit();
 			}
 		}
@@ -159,10 +186,38 @@
                 $stmt->execute();
                 $stmt->close();
                 $conn->close();
-                header("Location: gallery_own.php");
                 exit();
             }
         }
         header("Location: gallery_own.php");
         exit();
+    }
+	
+	function show_latest_public_photo(){
+        $photo_html = null;
+        $privacy = 3;
+        $conn = new mysqli($GLOBALS["server_host"], $GLOBALS["server_user_name"], $GLOBALS["server_password"], $GLOBALS["database"]);
+		$conn->set_charset("utf8");
+        $stmt = $conn->prepare("SELECT id, alttext FROM vp_photos WHERE id = (SELECT MAX(id) FROM vp_photos WHERE privacy = ? AND deleted IS NULL)");
+        echo $conn->error;
+        $stmt->bind_param("i", $privacy);
+        $stmt->bind_result($id_from_db, $alttext_from_db);
+        $stmt->execute();
+        if($stmt->fetch()){
+            //<img src="kataloog/fail" alt="tekst">
+			//<img src="show_public_photo.php?photo=74" alt="tekst">
+            //$photo_html = '<img src="' .$GLOBALS["gallery_photo_normal_folder"] .$filename_from_db .'" alt="';
+			$photo_html = '<img src="show_public_photo.php?photo=' .$id_from_db .'" alt="';
+            if(empty($alttext_from_db)){
+                $photo_html .= "Üleslaetud foto";
+            } else {
+                $photo_html .= $alttext_from_db;
+            }
+            $photo_html .= '">' ."\n";
+        } else {
+            $photo_html = "<p>Kahjuks pole ühtegi avalikku fotot üles laetud!</p>";
+        }
+        $stmt->close();
+		$conn->close();
+		return $photo_html;
     }

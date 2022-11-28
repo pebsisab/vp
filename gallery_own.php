@@ -1,5 +1,7 @@
 <?php
-	session_start();
+	//session_start();
+	require_once "classes/SessionManager.class.php";
+	SessionManager::sessionStart("vp", 0, "~pebsisab/vp/", "greeny.cs.tlu.ee");
 	//kontrollin, kas oleme sisse loginud
 	if(!isset($_SESSION["user_id"])){
 		header("Location: page.php");
@@ -26,6 +28,8 @@
 	} else {
 		$page = $_GET["page"];
 	}
+	
+	$_SESSION["gallery_own_page"] = $page;
 	
 	$style_sheets = "styles/gallery.css";
 	require_once "header.php";
