@@ -9,12 +9,13 @@
         //$stmt = $conn->prepare("SELECT filename, alttext FROM vp_photos WHERE privacy >= ? AND deleted IS NULL");
 		//LIMIT x - mitu näidata
 		//LIMIT x,y - mitu vahele jätta, mitu näidata
-		$stmt = $conn->prepare("SELECT vp_photos.filename, vp_photos.alttext, vp_users.firstname, vp_users.lastname FROM vp_photos JOIN vp_users ON vp_photos.userid = vp_users.id WHERE vp_photos.privacy >= ? AND vp_photos.deleted IS NULL GROUP BY vp_photos.id ORDER BY vp_photos.id DESC LIMIT ?,?");
+		$stmt = $conn->prepare("SELECT vp_photos.id, filename, alttext, vp_photos.created, firstname, lastname, AVG(rating) as AvgValue FROM vp_photos JOIN vp_users ON vp_photos.userid = vp_users.id LEFT JOIN vp_photoratings ON vp_photoratings.photoid = vp_photos.id WHERE vp_photos.privacy >= ? AND deleted IS NULL GROUP BY vp_photos.id DESC LIMIT ?,?");
         echo $conn->error;
         $stmt->bind_param("iii", $privacy, $skip, $limit);
-        $stmt->bind_result($filename_from_db, $alttext_from_db, $firstname_from_db, $lastname_from_db);
+        $stmt->bind_result($id_from_db, $filename_from_db, $alttext_from_db, $created_from_db, $firstname_from_db, $lastname_from_db, $avg_from_db);
         $stmt->execute();
         while($stmt->fetch()){
+			//<img src="photo_upload_thumbnail/vp_16672936178946.jpg" alt="hawwww" class="thumbs" data-filename="vp_16672936178946.jpg" data-id="43">
 			$photo_html .= '<div class="thumbgallery">' ."\n";
 			$photo_html .= '<img src="' .$GLOBALS["gallery_photo_thumbnail_folder"] .$filename_from_db .'" alt="';
             if(empty($alttext_from_db)){
@@ -22,8 +23,9 @@
             } else {
                 $photo_html .= $alttext_from_db;
             }
-            $photo_html .= '" class="thumbs">' ."\n";
+            $photo_html .= '" class="thumbs" data-filename="' .$filename_from_db .'" data-id="' .$id_from_db .'">' ."\n";
             $photo_html .= "<p>" .$firstname_from_db ." " .$lastname_from_db ."</p> \n";
+			$photo_html .= "<p>" .$avg_from_db ."</p> \n";
 			$photo_html .= "</div> \n";
         }
         $stmt->close();

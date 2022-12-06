@@ -11,11 +11,18 @@
 	</style>
 	<?php
 		
-		$style_sheets = ["styles/gallery.css"];
+		//$style_sheets = ["styles/gallery.css"];
         if(isset($style_sheets) and !empty($style_sheets)){
             for($i = 0;$i < count($style_sheets);$i++){
             //<link rel="stylesheet" href="styles/gallery.css">
                 echo '<link rel="stylesheet" href="' .$style_sheets[$i] .'">' ."\n";
+            }
+        }
+		
+		if(isset($javascripts) and !empty($javascripts)){
+            foreach($javascripts as $js){
+            //<script src="javascript.js" defer></script>
+                echo '<script src="' .$js .'" defer></script>' ."\n";
             }
         }
 	?>
